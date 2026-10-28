@@ -1,5 +1,6 @@
 /* ---------- Colors ---------- */
 :root {
+  color-scheme: light dark;
   --bg: #fcf7f4;
   --card: #ffffff;
   --text: #111111;
@@ -126,7 +127,8 @@ label {
   font-weight: 500;
 }
 
-input {
+input,
+select {
   width: 100%;
   padding: 12px 14px;
   font-family: inherit;
@@ -137,7 +139,12 @@ input {
   border-radius: 12px;
 }
 
-input:focus {
+select {
+  cursor: pointer;
+}
+
+input:focus,
+select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
