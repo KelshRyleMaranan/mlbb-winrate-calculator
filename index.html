@@ -21,6 +21,11 @@
     </header>
 
     <section class="card">
+      <div class="modes" role="group" aria-label="Calculator mode">
+        <button type="button" id="mode-wins" class="mode active" aria-pressed="true">Wins needed</button>
+        <button type="button" id="mode-losses" class="mode" aria-pressed="false">Losses I can afford</button>
+      </div>
+
       <form id="calc-form" novalidate>
         <div class="field">
           <label for="total-matches">Total matches played</label>
@@ -32,9 +37,14 @@
           <input type="number" id="current-rate" inputmode="decimal" placeholder="e.g. 52.5" min="0" max="100" step="any">
         </div>
 
-        <div class="field">
+        <div class="field" id="field-target">
           <label for="target-rate">Target win rate (%)</label>
           <input type="number" id="target-rate" inputmode="decimal" placeholder="e.g. 60" min="0" max="100" step="any">
+        </div>
+
+        <div class="field" id="field-min" hidden>
+          <label for="min-rate">Lowest win rate I'll accept (%)</label>
+          <input type="number" id="min-rate" inputmode="decimal" placeholder="e.g. 50" min="0" max="100" step="any">
         </div>
 
         <button type="submit" class="btn">Calculate</button>
