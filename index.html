@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLBB Win Rate Calculator</title>
+  <meta name="description" content="Find out how many wins in a row you need to reach your target Mobile Legends win rate.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <p class="eyebrow">Mobile Legends: Bang Bang</p>
+      <h1>Win Rate Calculator</h1>
+      <p class="subtitle">See how many wins in a row you need to reach your target win rate.</p>
+    </header>
+
+    <section class="card">
+      <form id="calc-form" novalidate>
+        <div class="field">
+          <label for="total-matches">Total matches played</label>
+          <input type="number" id="total-matches" inputmode="numeric" placeholder="e.g. 500" min="0">
+        </div>
+
+        <div class="field">
+          <label for="current-rate">Current win rate (%)</label>
+          <input type="number" id="current-rate" inputmode="decimal" placeholder="e.g. 52.5" min="0" max="100" step="any">
+        </div>
+
+        <div class="field">
+          <label for="target-rate">Target win rate (%)</label>
+          <input type="number" id="target-rate" inputmode="decimal" placeholder="e.g. 60" min="0" max="100" step="any">
+        </div>
+
+        <button type="submit" class="btn">Calculate</button>
+      </form>
+
+      <div id="result" class="result" aria-live="polite"></div>
+    </section>
+
+    <footer class="footer">
+      <p>Made by Kelsh</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
