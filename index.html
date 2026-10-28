@@ -15,12 +15,18 @@
 <body>
   <main class="container">
     <header class="header">
-      <p class="eyebrow">Mobile Legends: Bang Bang</p>
+      <p class="eyebrow" id="game-name">Mobile Legends: Bang Bang</p>
       <h1>Win Rate Calculator</h1>
       <p class="subtitle">See how many wins in a row you need to reach your target win rate.</p>
     </header>
 
     <section class="card">
+      <div class="field">
+        <label for="game-select">Game</label>
+        <!-- Options are added by script.js from the GAMES list -->
+        <select id="game-select"></select>
+      </div>
+
       <div class="modes" role="group" aria-label="Calculator mode">
         <button type="button" id="mode-wins" class="mode active" aria-pressed="true">Wins needed</button>
         <button type="button" id="mode-losses" class="mode" aria-pressed="false">Losses I can afford</button>

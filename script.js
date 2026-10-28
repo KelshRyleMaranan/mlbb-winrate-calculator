@@ -9,9 +9,79 @@ const subtitle = document.querySelector(".subtitle");
 const historyCard = document.getElementById("history");
 const historyList = document.getElementById("history-list");
 const clearHistoryBtn = document.getElementById("clear-history");
+const gameSelect = document.getElementById("game-select");
+const gameName = document.getElementById("game-name");
+const metaDescription = document.querySelector('meta[name="description"]');
 
 // Which mode we are in: "wins" or "losses"
 let mode = "wins";
+
+// ---------- Games ----------
+
+// To add a game, add one line here. The dropdown builds itself from this list.
+// name = label above the title, short = tab title and history, desc = page description
+const GAMES = {
+  mlbb: { name: "Mobile Legends: Bang Bang", short: "MLBB", desc: "Mobile Legends" },
+  wildrift: { name: "League of Legends: Wild Rift", short: "Wild Rift", desc: "Wild Rift" },
+  valorant: { name: "Valorant", short: "Valorant", desc: "Valorant" },
+  dota2: { name: "Dota 2", short: "Dota 2", desc: "Dota 2" },
+  hok: { name: "Honor of Kings", short: "HOK", desc: "Honor of Kings" }
+};
+
+const DEFAULT_GAME = "mlbb";
+const GAME_KEY = "winrate-game";
+let game = DEFAULT_GAME;
+
+// Fill the dropdown with one option per game in the list above
+function buildGameOptions() {
+  gameSelect.innerHTML = "";
+
+  Object.keys(GAMES).forEach(function (key) {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = GAMES[key].name;
+    gameSelect.appendChild(option);
+  });
+}
+
+// Read the saved game. Falls back to the default if nothing valid is saved
+function loadGame() {
+  try {
+    const saved = localStorage.getItem(GAME_KEY);
+    return GAMES[saved] ? saved : DEFAULT_GAME;
+  } catch (error) {
+    return DEFAULT_GAME;
+  }
+}
+
+// Switch to a game and update the page text
+function setGame(newGame) {
+  game = newGame;
+  const info = GAMES[game];
+
+  gameSelect.value = game;
+  gameName.textContent = info.name;
+  document.title = info.short + " Win Rate Calculator";
+  metaDescription.setAttribute(
+    "content",
+    "Find out how many wins in a row you need to reach your target " + info.desc + " win rate."
+  );
+
+  // Clear the old result
+  result.textContent = "";
+  result.className = "result";
+
+  // Remember the choice
+  try {
+    localStorage.setItem(GAME_KEY, game);
+  } catch (error) {
+    // Storage can be blocked (private mode), so just skip saving
+  }
+}
+
+gameSelect.addEventListener("change", function () {
+  setGame(gameSelect.value);
+});
 
 // History settings
 const HISTORY_KEY = "winrate-history";
@@ -251,14 +321,18 @@ function renderHistory() {
     answer.className = "history-answer";
     detail.className = "history-detail";
 
+    // Old entries have no game saved, so treat them as MLBB
+    const entryGame = GAMES[entry.game] ? entry.game : DEFAULT_GAME;
+    const gameLabel = GAMES[entryGame].short;
+
     if (entry.mode === "wins") {
       const word = entry.answer === 1 ? "win" : "wins";
       answer.textContent = entry.answer.toLocaleString() + " " + word + " needed";
-      detail.textContent = entry.total.toLocaleString() + " matches · " + entry.current + "% → " + entry.goal + "%";
+      detail.textContent = gameLabel + " · " + entry.total.toLocaleString() + " matches · " + entry.current + "% → " + entry.goal + "%";
     } else {
       const word = entry.answer === 1 ? "loss" : "losses";
       answer.textContent = entry.answer.toLocaleString() + " " + word + " allowed";
-      detail.textContent = entry.total.toLocaleString() + " matches · " + entry.current + "% (lowest " + entry.goal + "%)";
+      detail.textContent = gameLabel + " · " + entry.total.toLocaleString() + " matches · " + entry.current + "% (lowest " + entry.goal + "%)";
     }
 
     item.appendChild(answer);
@@ -331,7 +405,7 @@ form.addEventListener("submit", function (event) {
     const wins = calculateWinsNeeded(total, currentRate, targetRate);
 
     showWinsResult(total, currentRate, targetRate, wins);
-    saveToHistory({ mode: "wins", total: total, current: currentRate, goal: targetRate, answer: wins });
+    saveToHistory({ game: game, mode: "wins", total: total, current: currentRate, goal: targetRate, answer: wins });
   } else {
     const minText = document.getElementById("min-rate").value;
 
@@ -347,9 +421,13 @@ form.addEventListener("submit", function (event) {
     const losses = calculateLossesAllowed(total, currentRate, minRate);
 
     showLossesResult(total, currentRate, minRate, losses);
-    saveToHistory({ mode: "losses", total: total, current: currentRate, goal: minRate, answer: losses });
+    saveToHistory({ game: game, mode: "losses", total: total, current: currentRate, goal: minRate, answer: losses });
   }
 });
 
-// Show any saved history when the page loads
+// ---------- Start up ----------
+
+// Build the dropdown, then restore the saved game and any saved history
+buildGameOptions();
+setGame(loadGame());
 renderHistory();
