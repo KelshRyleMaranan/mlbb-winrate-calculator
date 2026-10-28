@@ -127,7 +127,23 @@ function showError(message) {
   result.className = "result error";
 }
 
-// Show the wins needed result with the big number and extra stats
+// Build the progress bar HTML: orange fill = current rate, marker = goal
+function progressBarHTML(currentRate, markerRate, markerLabel) {
+  return (
+    '<div class="bar" role="img" aria-label="Current win rate ' + currentRate + "%. " + markerLabel + " " + markerRate + '%.">' +
+      '<div class="bar-track">' +
+        '<div class="bar-fill" style="--w: ' + currentRate + '%"></div>' +
+        '<div class="bar-marker" style="left: ' + markerRate + '%"></div>' +
+      "</div>" +
+      '<div class="bar-legend">' +
+        '<span><i class="dot dot-fill"></i>Current ' + currentRate + "%</span>" +
+        '<span><i class="dot dot-marker"></i>' + markerLabel + " " + markerRate + "%</span>" +
+      "</div>" +
+    "</div>"
+  );
+}
+
+// Show the wins needed result with the big number, progress bar and extra stats
 function showWinsResult(total, currentRate, targetRate, wins) {
   // Wins you already have (rounded to a whole match)
   const currentWins = Math.round((total * currentRate) / 100);
@@ -145,6 +161,7 @@ function showWinsResult(total, currentRate, targetRate, wins) {
     '<p class="result-label">You need</p>' +
     '<p class="result-big">' + wins.toLocaleString() + " " + winWord + " in a row</p>" +
     '<p class="result-sub">to reach ' + targetRate + "% win rate</p>" +
+    progressBarHTML(currentRate, targetRate, "Target") +
     '<ul class="stats">' +
       "<li><span>Matches after streak</span><strong>" + newTotal.toLocaleString() + "</strong></li>" +
       "<li><span>Final record</span><strong>" + newWins.toLocaleString() + "W - " + currentLosses.toLocaleString() + "L</strong></li>" +
@@ -152,7 +169,7 @@ function showWinsResult(total, currentRate, targetRate, wins) {
     "</ul>";
 }
 
-// Show the losses allowed result with the big number and extra stats
+// Show the losses allowed result with the big number, progress bar and extra stats
 function showLossesResult(total, currentRate, minRate, losses) {
   // Wins you already have (rounded to a whole match)
   const currentWins = Math.round((total * currentRate) / 100);
@@ -170,6 +187,7 @@ function showLossesResult(total, currentRate, minRate, losses) {
     '<p class="result-label">You can afford</p>' +
     '<p class="result-big">' + losses.toLocaleString() + " " + lossWord + " in a row</p>" +
     '<p class="result-sub">and still stay at ' + minRate + "% or higher</p>" +
+    progressBarHTML(currentRate, minRate, "Lowest") +
     '<ul class="stats">' +
       "<li><span>Matches after losses</span><strong>" + newTotal.toLocaleString() + "</strong></li>" +
       "<li><span>Final record</span><strong>" + currentWins.toLocaleString() + "W - " + newLosses.toLocaleString() + "L</strong></li>" +

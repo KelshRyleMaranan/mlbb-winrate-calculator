@@ -207,6 +207,80 @@ input:focus {
   font-weight: 500;
 }
 
+/* ---------- Progress bar ---------- */
+.bar {
+  margin-top: 18px;
+}
+
+.bar-track {
+  position: relative;
+  height: 12px;
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.bar-fill {
+  height: 100%;
+  width: var(--w);
+  background: var(--accent);
+  border-radius: 999px;
+  animation: grow 0.7s ease-out;
+}
+
+.bar-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 4px;
+  background: var(--text);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+
+.bar-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.dot {
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.dot-fill {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.dot-marker {
+  width: 4px;
+  height: 12px;
+  background: var(--text);
+  border-radius: 2px;
+}
+
+@keyframes grow {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--w);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-fill {
+    animation: none;
+  }
+}
+
 /* ---------- Stats list ---------- */
 .stats {
   margin: 16px 0 0;
