@@ -312,6 +312,72 @@ input:focus {
   text-align: right;
 }
 
+/* ---------- History ---------- */
+.history {
+  margin-top: 20px;
+}
+
+.history[hidden] {
+  display: none;
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.history-head h2 {
+  margin: 0;
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  font-size: 1.15rem;
+}
+
+.link-btn {
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.history-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.history-answer {
+  display: block;
+  font-weight: 600;
+}
+
+.history-detail {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* ---------- Footer ---------- */
 .footer {
   margin-top: 28px;

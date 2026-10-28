@@ -6,9 +6,16 @@ const modeLossesBtn = document.getElementById("mode-losses");
 const fieldTarget = document.getElementById("field-target");
 const fieldMin = document.getElementById("field-min");
 const subtitle = document.querySelector(".subtitle");
+const historyCard = document.getElementById("history");
+const historyList = document.getElementById("history-list");
+const clearHistoryBtn = document.getElementById("clear-history");
 
 // Which mode we are in: "wins" or "losses"
 let mode = "wins";
+
+// History settings
+const HISTORY_KEY = "winrate-history";
+const HISTORY_MAX = 5;
 
 // ---------- Math ----------
 
@@ -195,6 +202,76 @@ function showLossesResult(total, currentRate, minRate, losses) {
     "</ul>";
 }
 
+// ---------- History ----------
+
+// Read the saved history. Returns an empty list if nothing is saved or storage fails
+function loadHistory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(HISTORY_KEY));
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+// Save the history list
+function storeHistory(list) {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+  } catch (error) {
+    // Storage can be blocked (private mode), so just skip saving
+  }
+}
+
+// Add a new entry to the top of the history
+function saveToHistory(entry) {
+  const list = loadHistory();
+
+  // Skip if it's exactly the same as the latest entry
+  if (list.length > 0 && JSON.stringify(list[0]) === JSON.stringify(entry)) {
+    return;
+  }
+
+  list.unshift(entry);
+  storeHistory(list.slice(0, HISTORY_MAX));
+  renderHistory();
+}
+
+// Draw the history list on the page
+function renderHistory() {
+  const list = loadHistory();
+
+  historyList.innerHTML = "";
+  historyCard.hidden = list.length === 0;
+
+  list.forEach(function (entry) {
+    const item = document.createElement("li");
+    const answer = document.createElement("span");
+    const detail = document.createElement("span");
+    answer.className = "history-answer";
+    detail.className = "history-detail";
+
+    if (entry.mode === "wins") {
+      const word = entry.answer === 1 ? "win" : "wins";
+      answer.textContent = entry.answer.toLocaleString() + " " + word + " needed";
+      detail.textContent = entry.total.toLocaleString() + " matches · " + entry.current + "% → " + entry.goal + "%";
+    } else {
+      const word = entry.answer === 1 ? "loss" : "losses";
+      answer.textContent = entry.answer.toLocaleString() + " " + word + " allowed";
+      detail.textContent = entry.total.toLocaleString() + " matches · " + entry.current + "% (lowest " + entry.goal + "%)";
+    }
+
+    item.appendChild(answer);
+    item.appendChild(detail);
+    historyList.appendChild(item);
+  });
+}
+
+clearHistoryBtn.addEventListener("click", function () {
+  storeHistory([]);
+  renderHistory();
+});
+
 // ---------- Mode toggle ----------
 
 function setMode(newMode) {
@@ -254,6 +331,7 @@ form.addEventListener("submit", function (event) {
     const wins = calculateWinsNeeded(total, currentRate, targetRate);
 
     showWinsResult(total, currentRate, targetRate, wins);
+    saveToHistory({ mode: "wins", total: total, current: currentRate, goal: targetRate, answer: wins });
   } else {
     const minText = document.getElementById("min-rate").value;
 
@@ -269,5 +347,9 @@ form.addEventListener("submit", function (event) {
     const losses = calculateLossesAllowed(total, currentRate, minRate);
 
     showLossesResult(total, currentRate, minRate, losses);
+    saveToHistory({ mode: "losses", total: total, current: currentRate, goal: minRate, answer: losses });
   }
 });
+
+// Show any saved history when the page loads
+renderHistory();
